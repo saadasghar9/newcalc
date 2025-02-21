@@ -1,0 +1,68 @@
+ body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .tab { display: none; }
+        .tab.active { display: block; }
+        .form-group { margin-bottom: 15px; }
+        input { width: 100%; padding: 10px; margin-top: 5px; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .nextBtn, .prevBtn { background-color: #4CAF50; color: white; border: none; }
+        .nextBtn:hover, .prevBtn:hover { background-color: #45a049; }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        h1, h2 {
+            color: #333;
+            text-align: center;
+        }
+        h3 {
+            color: #666;
+            margin-top: 20px;
+        }
+        p {
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+        .metric {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+        .benchmark {
+            color: #888;
+            font-style: italic;
+            font-size: 0.9em;
+        }
+        .chart-container {
+            margin: 20px 0;
+            position: relative;
+            height: 200px;
+        }
+        canvas {
+            max-width: 100%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
