@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost Revenue Calculator - Bilnow.com</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .tab { display: none; }
+        .tab.active { display: block; }
+        .form-group { margin-bottom: 15px; }
+        input { width: 100%; padding: 10px; margin-top: 5px; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        .nextBtn, .prevBtn { background-color: #4CAF50; color: white; border: none; }
+        .nextBtn:hover, .prevBtn:hover { background-color: #45a049; }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        h1, h2 {
+            color: #333;
+            text-align: center;
+        }
+        h3 {
+            color: #666;
+            margin-top: 20px;
+        }
+        p {
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+        .metric {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #333;
+        }
+        .benchmark {
+            color: #888;
+            font-style: italic;
+            font-size: 0.9em;
+        }
+        .chart-container {
+            margin: 20px 0;
+            position: relative;
+            height: 200px;
+        }
+        canvas {
+            max-width: 100%;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form id="regForm" method="post">
+            <!-- Keep your existing form structure here (as in previous versions) -->
+            <div class="tab active">
+                <h1>Bilnow.com</h1>
+                <h2>Claim Rejection Analysis</h2>
+                <p>Know the story behind your claim rejection numbers.</p>
+                <div class="form-group">
+                    <label>Number of claims you transmit per month</label>
+                    <input type="number" id="claims_per_month" name="claims_per_month" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Average reimbursement per claim ($)</label>
+                    <input type="number" id="avg_reimbursement" name="avg_reimbursement" min="0" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label>Current Percentage of rejected claims (%)</label>
+                    <input type="number" id="rejected_claims" name="rejected_claims" min="0" max="100" required>
+                </div>
+                <div style="overflow:auto;">
+                    <div style="float:right;">
+                        <button type="button" class="nextBtn" onclick="nextPrev(1)">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab">
+                <h2>AR Benchmarking</h2>
+                <p>Is your AR cycle too slow? Find out!</p>
+                <div class="form-group">
+                    <label>Balance in 0-30 Days ($)</label>
+                    <input type="number" id="balance_0_30" name="balance_0_30" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Balance in 31-60 Days ($)</label>
+                    <input type="number" id="balance_31_60" name="balance_31_60" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Balance in 61-90 Days ($)</label>
+                    <input type="number" id="balance_61_90" name="balance_61_90" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Balance in 91-120 Days ($)</label>
+                    <input type="number" id="balance_91_120" name="balance_91_120" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label>Balance >120 Days ($)</label>
+                    <input type="number" id="balance_over_120" name="balance_over_120" min="0" required>
+                </div>
+                <div style="overflow:auto;">
+                    <div style="float:right;">
+                        <button type="button" class="prevBtn" onclick="nextPrev(-1)">Previous</button>
+                        <button type="button" class="nextBtn" onclick="nextPrev(1)">Next</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab">
+                <h2>Personal Details</h2>
+                <p>Let’s start recovering revenue right away!</p>
+                <div class="form-group">
+                    <label>Name</label>
+                    <input type="text" id="lrraname" name="lrraname" required>
+                </div>
+                <div class="form-group">
+                    <label>Contact Number</label>
+                    <input type="tel" id="lrraphone" name="lrraphone" required>
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" id="lrraemail" name="lrraemail" required>
+                </div>
+                <div class="form-group">
+                    <label>Number of patients per month</label>
+                    <input type="number" id="patients_per_month" name="patients_per_month" min="0" required>
+                </div>
+                <div style="overflow:auto;">
+                    <div style="float:right;">
+                        <button type="button" class="prevBtn" onclick="nextPrev(-1)">Previous</button>
+                        <button type="button" class="nextBtn" onclick="submitForm()">Submit</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+
+        <div id="report-container" style="display: none;">
+            <h1>Bilnow.com Lost Revenue Recovery Report</h1>
+
+            <div class="section">
+                <h2>Claim Rejection</h2>
+                <p>The average claim rejection rate is 3.2%, which is more than the typical 1-2% that most experts believe shouldn’t properly be addressed. Both cleansing validation issues and invalid data can cause specific claim rejections.</p>
+                <p>Our analysis and provider-specific claim rejection reports help uptick patterns, common denominators. The reports offer a deep dive into metrics and provide you with:</p>
+                <div class="chart-container">
+                    <canvas id="claimRejectionChart"></canvas>
+                </div>
+                <p class="metric">Monthly claim rejection report: $<span id="monthly_rejection_value">0</span></p>
+                <p class="benchmark">Industry Benchmark: 1-2% rejection rate (MGMA)</p>
+            </div>
+
+            <div class="section">
+                <h2>MGMA AR Benchmarking</h2>
+                <p>Are you on par with industry standards when it comes to operational financial efficiency? MGMA provides healthcare organizations with benchmarking data that enables standards with benchmarks, raise the bar when it comes to financial performance corrections and reporting.</p>
+                <div class="chart-container">
+                    <canvas id="arBenchmarkChart"></canvas>
+                </div>
+                <table>
+                    <tr><th>Days in AR</th><th>Outstanding AR</th><th>MGMA Benchmark (%)</th><th>Difference (%)</th></tr>
+                    <tr><td>0-30 Days</td><td id="ar_0_30"></td><td>25.7%</td><td id="diff_0_30"></td></tr>
+                    <tr><td>31-60 Days</td><td id="ar_31_60"></td><td>15.6%</td><td id="diff_31_60"></td></tr>
+                    <tr><td>61-90 Days</td><td id="ar_61_90"></td><td>8.9%</td><td id="diff_61_90"></td></tr>
+                    <tr><td>91-120 Days</td><td id="ar_91_120"></td><td>4.7%</td><td id="diff_91_120"></td></tr>
+                    <tr><td>>120 Days</td><td id="ar_over_120"></td><td>3.1%</td><td id="diff_over_120"></td></tr>
+                </table>
+            </div>
+
+            <div class="section">
+                <h2>Reimbursement Velocity</h2>
+                <p>Healthcare industry average reimbursement velocity is 32 days through the cycle. Check the effectiveness of your claims cycle and employ ways to quicken it.</p>
+                <p class="metric">Days to reimbursement: <span id="reimbursement_velocity">121</span></p>
+                <p class="benchmark">Industry Benchmark: 32 days (MGMA)</p>
+            </div>
+
+            <div class="section">
+                <h2>Charges Submission Velocity</h2>
+                <p>Patients don’t want to wait months and end up in debt. So, why would you wait eternity to get paid? The number of days it takes to get submitted serves as a barometer to know how healthy your revenue cycle is. There shouldn’t be daylight between your date of service and submitted date.</p>
+                <p class="metric">Days to submission: <span id="charges_velocity">-180</span></p>
+                <p class="benchmark">Industry Benchmark: 0-5 days (MGMA)</p>
+            </div>
+
+            <p class="metric">Money Lost per Month: $<span id="money_lost">-17,370</span></p>
+            <p class="metric">Number of patients per month: <span id="patients_per_month_value">512</span></p>
+            <p class="metric">Average patients per day: <span id="avg_patients_per_day">17</span></p>
+
+            <h3>Contact Information</h3>
+            <p>Name: <span id="lrraname_value"></span></p>
+            <p>Phone: <span id="lrraphone_value"></span></p>
+            <p>Email: <span id="lrraemail_value"></span></p>
+        </div>
+    </div>
+
+    <script>
+        let currentTab = 0;
+
+        function showTab(n) {
+            const tabs = document.getElementsByClassName("tab");
+            for (let i = 0; i < tabs.length; i++) tabs[i].classList.remove("active");
+            tabs[n].classList.add("active");
+        }
+
+        function nextPrev(n) {
+            if (n === 1 && !validateForm()) return;
+            currentTab += n;
+            if (currentTab >= document.getElementsByClassName("tab").length) return;
+            showTab(currentTab);
+        }
+
+        function validateForm() {
+            const inputs = document.getElementsByClassName("tab")[currentTab].getElementsByTagName("input");
+            for (let i = 0; i < inputs.length; i++) {
+                if (inputs[i].value === "") {
+                    alert("All fields must be filled out");
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        function submitForm() {
+            if (!validateForm()) return;
+
+            const formData = {
+                claims_per_month: Number(document.getElementById("claims_per_month").value),
+                avg_reimbursement: Number(document.getElementById("avg_reimbursement").value),
+                rejected_claims: Number(document.getElementById("rejected_claims").value),
+                balance_0_30: Number(document.getElementById("balance_0_30").value),
+                balance_31_60: Number(document.getElementById("balance_31_60").value),
+                balance_61_90: Number(document.getElementById("balance_61_90").value),
+                balance_91_120: Number(document.getElementById("balance_91_120").value),
+                balance_over_120: Number(document.getElementById("balance_over_120").value),
+                lrraname: document.getElementById("lrraname").value,
+                lrraphone: document.getElementById("lrraphone").value,
+                lrraemail: document.getElementById("lrraemail").value,
+                patients_per_month: Number(document.getElementById("patients_per_month").value)
+            };
+
+            // Calculations
+            const totalRevenue = formData.claims_per_month * formData.avg_reimbursement;
+            const rejectedClaimsCount = (formData.rejected_claims / 100) * formData.claims_per_month;
+            const lostRevenue = rejectedClaimsCount * formData.avg_reimbursement;
+            const acceptedClaimsCount = formData.claims_per_month - rejectedClaimsCount;
+            
+            const totalBalance = formData.balance_0_30 + formData.balance_31_60 + formData.balance_61_90 + formData.balance_91_120 + formData.balance_over_120;
+            const arAging = [
+                (formData.balance_0_30 / totalBalance) * 100,
+                (formData.balance_31_60 / totalBalance) * 100,
+                (formData.balance_61_90 / totalBalance) * 100,
+                (formData.balance_91_120 / totalBalance) * 100,
+                (formData.balance_over_120 / totalBalance) * 100
+            ];
+
+            // Reimbursement and Charges Velocities (placeholders, adjust based on data)
+            const reimbursementVelocity = 121; // Example from PDF
+            const chargesVelocity = -180; // Example from PDF
+            const moneyLost = -17370; // Example from PDF
+            const avgPatientsPerDay = (formData.patients_per_month / 30).toFixed(0); // Assuming 30 days/month
+
+            // Hide form, show report
+            document.getElementById("regForm").style.display = "none";
+            const report = document.getElementById("report-container");
+            report.style.display = "block";
+
+            // Populate report
+            document.getElementById("lrraname_value").textContent = formData.lrraname;
+            document.getElementById("lrraphone_value").textContent = formData.lrraphone;
+            document.getElementById("lrraemail_value").textContent = formData.lrraemail;
+            document.getElementById("patients_per_month_value").textContent = formData.patients_per_month;
+            document.getElementById("avg_patients_per_day").textContent = avgPatientsPerDay;
+            document.getElementById("money_lost").textContent = moneyLost.toFixed(2);
+            document.getElementById("reimbursement_velocity").textContent = reimbursementVelocity;
+            document.getElementById("charges_velocity").textContent = chargesVelocity;
+            document.getElementById("monthly_rejection_value").textContent = lostRevenue.toFixed(2);
+
+            // Update AR aging table
+            document.getElementById("ar_0_30").textContent = `${arAging[0].toFixed(1)}%`;
+            document.getElementById("ar_31_60").textContent = `${arAging[1].toFixed(1)}%`;
+            document.getElementById("ar_61_90").textContent = `${arAging[2].toFixed(1)}%`;
+            document.getElementById("ar_91_120").textContent = `${arAging[3].toFixed(1)}%`;
+            document.getElementById("ar_over_120").textContent = `${arAging[4].toFixed(1)}%`;
+
+            // Calculate differences from MGMA benchmarks
+            const mgmaBenchmarks = [25.7, 15.6, 8.9, 4.7, 3.1];
+            for (let i = 0; i < arAging.length; i++) {
+                const diff = arAging[i] - mgmaBenchmarks[i];
+                document.getElementById(`diff_${i === 0 ? '0_30' : i === 1 ? '31_60' : i === 2 ? '61_90' : i === 3 ? '91_120' : 'over_120'}`).textContent = `${diff.toFixed(1)}%`;
+            }
+
+            // Generate charts
+            generateCharts(rejectedClaimsCount, acceptedClaimsCount, arAging);
+        }
+
+        function generateCharts(rejectedClaims, acceptedClaims, arAging) {
+            // Claim Rejection Horizontal Bar Chart
+            new Chart(document.getElementById("claimRejectionChart"), {
+                type: "bar",
+                data: {
+                    labels: ["Your Practice", "Industry Benchmark"],
+                    datasets: [{
+                        label: "Claim Rejection Rate (%)",
+                        data: [rejectedClaims / (rejectedClaims + acceptedClaims) * 100, 1.5], // Example benchmark
+                        backgroundColor: ["#FF6384", "#36A2EB"],
+                        barThickness: 20
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', // Horizontal bars
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { title: { display: true, text: "Monthly Claim Rejection Report" } },
+                    scales: { x: { beginAtZero: true, max: 100 } }
+                }
+            });
+
+            // AR Benchmarking Horizontal Bar Chart
+            new Chart(document.getElementById("arBenchmarkChart"), {
+                type: "bar",
+                data: {
+                    labels: ["0-30 Days", "31-60 Days", "61-90 Days", "91-120 Days", ">120 Days"],
+                    datasets: [{
+                        label: "Your AR Aging (%)",
+                        data: arAging,
+                        backgroundColor: "#FFCE56",
+                        barThickness: 20
+                    }, {
+                        label: "MGMA Benchmark (%)",
+                        data: [25.7, 15.6, 8.9, 4.7, 3.1],
+                        backgroundColor: "#4BC0C0",
+                        barThickness: 20
+                    }]
+                },
+                options: {
+                    indexAxis: 'y', // Horizontal bars
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { title: { display: true, text: "MGMA AR Benchmarking" } },
+                    scales: { x: { beginAtZero: true, max: 100 } }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
