@@ -1,68 +1,168 @@
- body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-        .tab { display: none; }
-        .tab.active { display: block; }
-        .form-group { margin-bottom: 15px; }
-        input { width: 100%; padding: 10px; margin-top: 5px; }
-        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
-        .nextBtn, .prevBtn { background-color: #4CAF50; color: white; border: none; }
-        .nextBtn:hover, .prevBtn:hover { background-color: #45a049; }
-        .container {
-            max-width: 800px;
-            margin: 20px auto;
-            padding: 20px;
-            background: #fff;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-        }
-        .section {
-            margin-bottom: 30px;
-        }
-        h1, h2 {
-            color: #333;
-            text-align: center;
-        }
-        h3 {
-            color: #666;
-            margin-top: 20px;
-        }
-        p {
-            line-height: 1.6;
-            margin: 10px 0;
-        }
-        .metric {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #333;
-        }
-        .benchmark {
-            color: #888;
-            font-style: italic;
-            font-size: 0.9em;
-        }
-        .chart-container {
-            margin: 20px 0;
-            position: relative;
-            height: 200px;
-        }
-        canvas {
-            max-width: 100%;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f4f4f4;
-        }
+/* .background-animation {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Behind all content 
+    background: #f4f4f4; 
+} */
+#backgroundCanvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1; /* Keeps it behind other content */
+}
+
+.container {
+    position: relative; /* Ensure form stays above background */
+    z-index: 1; /* Above the animation */
+    max-width: 900px;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f4f4f4;
+    margin: 0;
+    padding: 20px;
+    
+}
+.header {
+    background-color: rgb(41, 116, 128);
+    padding: 22px;
+    margin-bottom: 20px;
+    
+    border-top-left-radius: 22px;
+    border-top-right-radius: 22px;
+    display: flex; /* Flexbox for side-by-side alignment */
+    align-items: center; /* Vertically center logo and title */
+    position: relative;
+    justify-content: center;
+    z-index: 1; /* Above canvas */
+}
+.logo {
+    width: 100px; /* Adjust size as needed */
+    height: auto;
+    margin-right: 20px; /* Space between logo and title */
+}
+.header h1 {
+    margin: 0; /* Remove default margin for clean alignment */
+    font-size: 24px; /* Adjust as needed */
+    color: #fff;
+}
+
+.container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.tab { display: none; }
+.tab.active { display: block; }
+
+.form-group {
+    margin-bottom: 20px;
+}
+.form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    padding: 12px 25px;
+    margin: 5px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    background-color: #4CAF50;
+    color: white;
+    transition: background-color 0.3s;
+}
+button:hover {
+    background-color: #45a049;
+}
+
+.section {
+    margin-bottom: 40px;
+    padding: 20px;
+    background: #fafafa;
+    border-radius: 6px;
+}
+
+h1 { font-size: 2em; color: #333; text-align: center; }
+h2 { font-size: 1.5em; color: #444; text-align: center; }
+h3 { font-size: 1.2em; color: #666; margin-top: 25px; }
+
+p { line-height: 1.8; color: #555; }
+.metric { font-size: 1.3em; color: #333; margin: 15px 0; }
+.benchmark { color: #777; font-style: italic; }
+
+.chart-container {
+    margin: 25px 0;
+    position: relative;
+    height: 250px;
+    width: 100%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+th, td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+
+/* Existing styles remain, add these new ones */
+
+
+.help-text {
+    background: #4CAF50;
+    border: 1px solid #080808;
+    border-radius: 4px;
+    padding: 10px;
+    margin-top: 5px;
+    font-size: 0.9em;
+    color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    max-width: 600px;
+    position: absolute; /* Position absolutely for hover positioning */
+    z-index: 1000; /* Ensure it appears above other elements */
+    display: none; /* Default hidden state */
+}
+
+.help-text p {
+    margin: 0;
+    line-height: 1.5;
+    color: #fafafa;
+}
+
+/* Ensure the help text stays within the container */
+.form-group {
+    position: relative; /* Make form-group the positioning context for help-text */
+    margin-bottom: 20px;
+}
+
+
+
+/* Keep all existing styles for .form-group, .range-display, input[type="range"], .help-icon, .help-text, etc., unchanged */

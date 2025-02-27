@@ -11,24 +11,39 @@
     </style>
 </head>
 <body>
+    <div class="header">
+        <img src="new-logo-white.svg" class="logo" alt="Logo">
+        <h1>Bilnow Recovery Audit Tool</h1>
+    </div>
+    
     <div class="container">
+        
         <form id="regForm" method="post">
-            <!-- Keep your existing form structure here (as in previous versions) -->
             <div class="tab active">
-                <h1>Bilnow.com</h1>
-                <h2>Claim Rejection Analysis</h2>
+               
+                <h2>Claim Rejection Analysis &#128508;</h2>
                 <p>Know the story behind your claim rejection numbers.</p>
                 <div class="form-group">
-                    <label>Number of claims you transmit per month</label>
-                    <input type="number" id="claims_per_month" name="claims_per_month" min="0" required>
+                    <label>Number of claims you transmit per month <span class="help-icon" onmouseover="showHelp('claims_per_month')" onmouseout="hideHelp('claims_per_month')">?</span></label>
+                    <input type="number" id="claims_per_month" name="claims_per_month" min="0" placeholder="150" required>
+                    <div id="claims_per_month_help" class="help-text" style="display: none;">
+                        <p>Enter the total number of medical claims your practice submits monthly. Example: If you submit 150 claims per month, enter 150.</p>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label>Average reimbursement per claim ($)</label>
-                    <input type="number" id="avg_reimbursement" name="avg_reimbursement" min="0" step="0.01" required>
+                    <label>Average reimbursement per claim ($) <span class="help-icon"  onmouseover="showHelp('avg_reimbursement')" onmouseout="hideHelp('avg_reimbursement') ">?</span></label>
+                    <input type="number" id="avg_reimbursement" name="avg_reimbursement" min="0" step="0.01" placeholder="250" required>
+                    <div id="avg_reimbursement_help" class="help-text" style="display: none;">
+                        <p>Enter the average dollar amount you receive per approved claim. Example: If claims are reimbursed at $250 on average, enter 250.00.</p>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label>Current Percentage of rejected claims (%)</label>
-                    <input type="number" id="rejected_claims" name="rejected_claims" min="0" max="100" required>
+                    <label>Current Percentage of rejected claims (%) <span class="help-icon" onmouseover="showHelp('rejected_claims')" onmouseout="hideHelp('rejected_claims')">?</span></label>
+                    <input type="range" id="rejected_claims" name="rejected_claims" min="0" max="100" value="0" step="1" oninput="updateRejectedDisplay(this.value)">
+                    <input type="text" id="rejected_claims_display" class="calc-display" value="0%" readonly>
+                    <div id="rejected_claims_help" class="help-text" style="display: none;">
+                        <p>Enter the percentage of claims rejected monthly. Example: If 5 out of 100 claims are rejected, enter 5.</p>
+                    </div>
                 </div>
                 <div style="overflow:auto;">
                     <div style="float:right;">
@@ -41,24 +56,39 @@
                 <h2>AR Benchmarking</h2>
                 <p>Is your AR cycle too slow? Find out!</p>
                 <div class="form-group">
-                    <label>Balance in 0-30 Days ($)</label>
-                    <input type="number" id="balance_0_30" name="balance_0_30" min="0" required>
+                    <label>Balance in 0-30 Days ($) <span class="help-icon" onmouseover="showHelp('balance_0_30')" onmouseout="hideHelp('balance_0_30')">?</span></label>
+                    <input type="number" id="balance_0_30" name="balance_0_30" min="0"  placeholder="4000" required>
+                    <div id="balance_0_30_help" class="help-text" style="display: none;">
+                        <p>Enter the total outstanding accounts receivable balance for claims aged 0-30 days. Example: If you have $5,000 in this category, enter 5000.</p>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label>Balance in 31-60 Days ($)</label>
-                    <input type="number" id="balance_31_60" name="balance_31_60" min="0" required>
+                    <label>Balance in 31-60 Days ($) <span class="help-icon"  onmouseover="showHelp('balance_31_60')" onmouseout="hideHelp('balance_31_60')">?</span></label>
+                    <input type="number" id="balance_31_60" name="balance_31_60" min="0" placeholder="3000" required>
+                    <div id="balance_31_60_help" class="help-text" style="display: none;">
+                        <p>Enter the total outstanding accounts receivable balance for claims aged 31-60 days. Example: If you have $3,000, enter 3000.</p>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label>Balance in 61-90 Days ($)</label>
-                    <input type="number" id="balance_61_90" name="balance_61_90" min="0" required>
+                    <label>Balance in 61-90 Days ($) <span class="help-icon"  onmouseover="showHelp('balance_61_90')" onmouseout="hideHelp('balance_61_90')">?</span></label>
+                    <input type="number" id="balance_61_90" name="balance_61_90" min="0" placeholder="2000" required>
+                    <div id="balance_61_90_help" class="help-text" style="display: none;">
+                        <p>Enter the total outstanding accounts receivable balance for claims aged 61-90 days. Example: If you have $2,000, enter 2000.</p>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label>Balance in 91-120 Days ($)</label>
-                    <input type="number" id="balance_91_120" name="balance_91_120" min="0" required>
+                    <label>Balance in 91-120 Days ($) <span class="help-icon"  onmouseover="showHelp('balance_91_120')" onmouseout="hideHelp('balance_91_120')">?</span></label>
+                    <input type="number" id="balance_91_120" name="balance_91_120" min="0" placeholder="1000" required>
+                    <div id="balance_91_120_help" class="help-text" style="display: none;">
+                        <p>Enter the total outstanding accounts receivable balance for claims aged 91-120 days. Example: If you have $1,000, enter 1000.</p>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label>Balance >120 Days ($)</label>
-                    <input type="number" id="balance_over_120" name="balance_over_120" min="0" required>
+                    <label>Balance >120 Days ($) <span class="help-icon"  onmouseover="showHelp('balance_over_120')" onmouseout="hideHelp('balance_over_120')">?</span></label>
+                    <input type="number" id="balance_over_120" name="balance_over_120" min="0" placeholder="500" required>
+                    <div id="balance_over_120_help" class="help-text" style="display: none;">
+                        <p>Enter the total outstanding accounts receivable balance for claims aged over 120 days. Example: If you have $500, enter 500.</p>
+                    </div>
                 </div>
                 <div style="overflow:auto;">
                     <div style="float:right;">
@@ -69,23 +99,49 @@
             </div>
 
             <div class="tab">
-                <h2>Personal Details</h2>
+                <h2>Personal Details & Velocities</h2>
                 <p>Let’s start recovering revenue right away!</p>
                 <div class="form-group">
-                    <label>Name</label>
+                    <label>Name <span class="help-icon" onmouseover="showHelp('lrraname')" onmouseout="hideHelp('lrraname')">?</span></label>
                     <input type="text" id="lrraname" name="lrraname" required>
+                    <div id="lrraname_help" class="help-text" style="display: none;">
+                        <p>Enter your full name. Example: John Doe.</p>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label>Contact Number</label>
+                    <label>Contact Number <span class="help-icon"  onmouseover="showHelp('lrraphone')" onmouseout="showHelp('lrraphone')">?</span></label>
                     <input type="tel" id="lrraphone" name="lrraphone" required>
+                    <div id="lrraphone_help" class="help-text" style="display: none;">
+                        <p>Enter your phone number in a standard format (e.g., 555-123-4567 or 5551234567).</p>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label>Email Address</label>
+                    <label>Email Address <span class="help-icon"  onmouseover="showHelp('lrraemail')" onmouseout="showHelp('lrraemail')">?</span></label>
                     <input type="email" id="lrraemail" name="lrraemail" required>
+                    <div id="lrraemail_help" class="help-text" style="display: none;">
+                        <p>Enter your email address. Example: john.doe@practice.com.</p>
+                    </div>
                 </div>
                 <div class="form-group">
-                    <label>Number of patients per month</label>
-                    <input type="number" id="patients_per_month" name="patients_per_month" min="0" required>
+                    <label>Number of patients per month <span class="help-icon" onmouseover="showHelp('patients_per_month')" onmouseout="showHelp('patients_per_month')">?</span></label>
+                    <input type="number" id="patients_per_month" name="patients_per_month" min="0" placeholder="eg: 300 patients" required>
+                    <div id="patients_per_month_help" class="help-text" style="display: none;">
+                        <p>Enter the average number of patients your practice sees monthly. Example: If you see 300 patients, enter 300.</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Average days to reimbursement <span class="help-icon"  onmouseover="showHelp('days_to_reimbursement')" onmouseout="showHelp('days_to_reimbursement')">?</span></label>
+                    <input type="number" id="days_to_reimbursement" name="days_to_reimbursement" min="0" placeholder="eg: 60 days" required>
+                    <div id="days_to_reimbursement_help" class="help-text" style="display: none;">
+                        <p>Enter the average number of days it takes to receive reimbursement after submitting a claim. Example: If it takes 40 days on average, enter 40.</p>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Average days to claim submission <span class="help-icon"  onmouseover="showHelp('days_to_reimbursement')" onmouseout="showHelp('days_to_submission')">?</span></label>
+                    <input type="number" id="days_to_submission" name="days_to_submission" min="0"  placeholder="eg: 10 days" required>
+                    <div id="days_to_submission_help" class="help-text" style="display: none;">
+                        <p>Enter the average number of days it takes to submit a claim after the date of service. Example: If claims are submitted within 7 days, enter 7.</p>
+                    </div>
                 </div>
                 <div style="overflow:auto;">
                     <div style="float:right;">
@@ -95,7 +151,6 @@
                 </div>
             </div>
         </form>
-
         <div id="report-container" style="display: none;">
             <h1>Bilnow.com Lost Revenue Recovery Report</h1>
 
@@ -151,8 +206,11 @@
         </div>
     </div>
       <script src="med01.js"></script>
-    <script>
-       
-    </script>
+    <!-- <script src="animate.js"></script> -->
+    <!-- <canvas id="background-animation" class="background-animation"></canvas> -->
+     <!-- <script src="second-animate.js"></script> -->
+    <!-- <canvas id="backgroundCanvas"></canvas> -->
+    <canvas id="backgroundCanvas"></canvas>
+    <script src="second-animate.js"></script>
 </body>
 </html>
